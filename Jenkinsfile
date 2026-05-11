@@ -1,47 +1,34 @@
-
 pipeline {
     agent any
 
     triggers {
-        pollSCM('* * * * *')  // vérifie toutes les minutes
+        pollSCM('* * * * *')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'VOTRE LIEN GIT'
-            }
-        }
-
-        stage('Pull latest code') {
-            steps {
-                dir('VOTRE CHEMIN DU DOSSIER DU PROJET') {
-                    git branch: 'main', url: 'VOTRE LIEN GIT'
-                }
+                git branch: 'main', url: 'https://github.com/arn17-gamin/devops-158-DjondjueAurian-tp'
             }
         }
 
         stage('Install dependencies') {
             steps {
-                dir('VOTRE CHEMIN DU DOSSIER DU PROJET') {
-                    sh '''
-                        source venv/bin/activate
-                        pip install flask
-                    '''
-                }
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install flask
+                '''
             }
         }
 
         stage('Restart Flask app') {
             steps {
-                script {
-                    sh 'pkill -f "python app.py" || true'
-                    sh '''
-                        cd VOTRE CHEMIN DU DOSSIER DU PROJET
-                        source venv/bin/activate
-                        nohup python app.py > flask.log 2>&1 &
-                    '''
-                }
+                sh '''
+                    pkill -f "python app.py" || true
+                    . venv/bin/activate
+                    nohup python app.py > flask.log 2>&1 &
+                '''
             }
         }
     }
