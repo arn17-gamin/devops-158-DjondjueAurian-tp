@@ -42,3 +42,21 @@ pipeline {
         }
     }
 }
+
+// NOUVEAU STAGE : Tests unitaires
+stage('Run unit tests') {
+    steps {
+        sh '''
+            source venv/bin/activate
+            python -m pytest test_app.py -v --tb=short
+        '''
+    }
+    post {
+        success {
+            echo 'Tous les tests unitaires sont passés avec succès !'
+        }
+        failure {
+            echo 'Échec des tests unitaires. Le déploiement est annulé.'
+        }
+    }
+}
